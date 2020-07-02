@@ -12,7 +12,6 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_fuel_quote_history_details">FuelQuoteHistoryDetails</string>
     <string-array name="states">
-        <item>Select your state</item>
         <item>Alabama</item>
         <item>Alaska</item>
         <item>Arizona</item>
