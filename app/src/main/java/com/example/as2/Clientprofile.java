@@ -41,7 +41,7 @@ public class Clientprofile extends AppCompatActivity {
         Address1 = findViewById(R.id.address1EditText); // up to 100 char
         Address2 = findViewById(R.id.address2EditText); // up to 100 char
         City = findViewById(R.id.cityEditText);         // up to 100 char
-        Zip = findViewById(R.id.zipcodeEditText);       // 5 or 9 char
+        Zip = findViewById(R.id.zipcodeEditText);
         confirm_Button = findViewById(R.id.confirmButton);
         State = findViewById(R.id.stateSpinner);
 
@@ -104,7 +104,7 @@ public class Clientprofile extends AppCompatActivity {
                 }
 
                 if(zip.length() != 5 && zip.length() != 9){
-                    Zip.setError("Zipcode must be five or nine length");
+                    Zip.setError("Zip code must be five or nine length");
                     return;
                 }
 
@@ -141,32 +141,6 @@ public class Clientprofile extends AppCompatActivity {
         startActivity(intent);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
