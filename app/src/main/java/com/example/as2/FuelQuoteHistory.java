@@ -2,14 +2,8 @@ package com.example.as2;
 
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
-
-import android.view.View;
 
 public class FuelQuoteHistory extends AppCompatActivity {
 
@@ -21,5 +15,14 @@ public class FuelQuoteHistory extends AppCompatActivity {
         setContentView(R.layout.activity_fuel_quote_history);
 
         FragmentManager fm = getSupportFragmentManager();
+        ListFragment listFragment_ = (ListFragment)fm.findFragmentById(R.id.container_main);
+
+        if (listFragment_ == null) {
+            listFragment_ = ListFragment.newInstance("TODO", "TODO");
+
+            fm.beginTransaction()
+                    .add(R.id.container_main, listFragment_)
+                    .commit();
+        }
     }
 }
