@@ -1,10 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".FuelQuoteFragment">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:id="@+id/fqh_linear_layout">
+    <TextView
+        android:id="@+id/fqh_total_due"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
 
+        android:text="test total due"/>
+    <TextView
+        android:id="@+id/fqh_gallons_requested"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="test gallons requested"/>
 
+    <TextView
+        android:id="@+id/fqh_price_per_gallon"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="test price per gallon"/>
+    <TextView
+        android:id="@+id/fqh_address"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fqh_total_due"
+        android:text="test address"/>
+    <TextView
+        android:id="@+id/fqh_date"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fqh_total_due"
+        android:text="test date"/>
 
-</FrameLayout>
+</LinearLayout>
+
+    <!--
+        gallons requested
+        address
+        date
+        price/gallon
+        total due
+    -->
