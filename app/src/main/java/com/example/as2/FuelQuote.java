@@ -18,7 +18,7 @@ public class FuelQuote {
     private String address;
     private float pricePerGallon;
 
-    private int numOfQuotes = 0;
+    public static int numOfQuotes = 0;
 
 
     public FuelQuote() { // default constructor for generating pseudo-content
@@ -42,7 +42,7 @@ public class FuelQuote {
 
         for (int i = 1; i <= numQuotes; i++) {
             fuelQuotes.add(new FuelQuote());
-            numQuotes++;
+            numOfQuotes++;
         }
 
         return fuelQuotes;
