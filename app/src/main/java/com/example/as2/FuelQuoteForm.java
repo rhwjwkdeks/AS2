@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -63,6 +64,7 @@ public class FuelQuoteForm extends AppCompatActivity {
                     double total_price = gal * price;
                     String t_price = "$" + total_price;
                     tprice_value.setText(t_price);
+                    Log.d("Total Price", "Total Price=" + t_price);
                 }
             }
         });
@@ -124,6 +126,7 @@ public class FuelQuoteForm extends AppCompatActivity {
 
                 if (d > day && y == year && m == month)
                     view.updateDate(year, month, day);
+                Log.d("Date", "Year=" + year + " Month=" + (month + 1) + " day=" + day);
             }
         });
     }
@@ -132,6 +135,7 @@ public class FuelQuoteForm extends AppCompatActivity {
         SharedPreferences sp = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
         String address = sp.getString(AD1, "");
         address_value.setText(address);
+        Log.d("Address", "Address from Client Profile:" + address);
     }
     public void backHome(){
         Intent intent = new Intent(this, Home.class);
