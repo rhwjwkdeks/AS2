@@ -38,26 +38,26 @@ public class MainActivity extends AppCompatActivity {
         mLoginButton = findViewById(R.id.loginButton);
         mToRegisterButton = findViewById(R.id.toRegisterButton);
 
-        mLoginButton.setOnClickListener(new View.OnClickListener(){
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 String username = mUsername.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
 
-                if(TextUtils.isEmpty(username)){
-                    mUsername.setError("Username is Required.");
-                    return;
-                }
+                if (TextUtils.isEmpty(username)) {
+                        mUsername.setError("Username is Required.");
+                        return;
+                    }
 
-                if(TextUtils.isEmpty(password)){
-                    mPassword.setError("Password is Required.");
-                    return;
-                }
+                    if (TextUtils.isEmpty(password)) {
+                        mPassword.setError("Password is Required.");
+                        return;
+                    }
 
-                if(password.length() < 6){
-                    mPassword.setError("Password must be more than five characters");
-                    return;
+                    if (password.length() < 6) {
+                        mPassword.setError("Password must be more than five characters");
+                        return;
                 }
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -66,11 +66,10 @@ public class MainActivity extends AppCompatActivity {
                 fAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()) {
+                        if (task.isSuccessful()) {
                             Toast.makeText(MainActivity.this, "Logged in Successfully.", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(), Home.class));
-                        }
-                        else{
+                        } else {
                             Toast.makeText(MainActivity.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.GONE);
                         }
@@ -92,6 +91,26 @@ public class MainActivity extends AppCompatActivity {
     public void openRegister(){
         Intent intent = new Intent(this, Register.class);
         startActivity(intent);
+    }
+
+    public String validateLogin(String username, String password) {
+        if (username.isEmpty()) {
+            return "Username is Required.";
+        }
+
+        if (password.isEmpty()) {
+            return "Password is Required.";
+        }
+        if (password.length() < 6) {
+            return "Password must be more than five characters";
+        }
+        if (!username.equals("abc")) {
+            return "No such username exists in the database.";
+        }
+        if(!password.equals("abcdef")) {
+            return "Wrong Password.";
+        }
+        return "Logged in Successfully.";
     }
 }
 
