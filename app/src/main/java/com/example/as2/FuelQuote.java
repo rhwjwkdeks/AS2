@@ -42,6 +42,7 @@ public class FuelQuote {
 
         for (int i = 1; i <= numQuotes; i++) {
             fuelQuotes.add(new FuelQuote());
+            numQuotes++;
         }
 
         return fuelQuotes;
