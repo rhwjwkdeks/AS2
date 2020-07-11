@@ -1,12 +1,15 @@
 package com.example.as2;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,15 +17,26 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import org.w3c.dom.Text;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Clientprofile extends AppCompatActivity {
     private Button back_Button;
     private Button confirm_Button;
 
-    SharedPreferences SP;
     EditText fullName, Address1, Address2, City, Zip;
     Spinner State;
+    FirebaseAuth fAuth;
+    FirebaseFirestore fStore;
+    String userID;
 
     public static final String mypreference = "mypref";
     public static final String FN = "fullnameKey";
@@ -45,22 +59,17 @@ public class Clientprofile extends AppCompatActivity {
         confirm_Button = findViewById(R.id.confirmButton);
         State = findViewById(R.id.stateSpinner);
 
-        SP = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
-        if(SP.contains(FN)){
-            fullName.setText(SP.getString(FN, ""));
-        }
-        if(SP.contains(AD1)){
-            Address1.setText(SP.getString(AD1, ""));
-        }
-        if(SP.contains(AD2)){
-            Address2.setText(SP.getString(AD2, ""));
-        }
-        if(SP.contains(CITY)){
-            City.setText(SP.getString(CITY, ""));
-        }
-        if(SP.contains(ZIP)){
-            Zip.setText(SP.getString(ZIP, ""));
-        }
+        fAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+
+        Spinner mySpinner = (Spinner) findViewById(R.id.stateSpinner);
+
+        ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(Clientprofile.this,
+                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.states));
+        myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mySpinner.setAdapter(myAdapter);
+
+
 
 
         confirm_Button.setOnClickListener(new View.OnClickListener() {
@@ -71,14 +80,8 @@ public class Clientprofile extends AppCompatActivity {
                 String ad2 = Address2.getText().toString().trim();
                 String city = City.getText().toString().trim();
                 String zip = Zip.getText().toString().trim();
-                String state = String.valueOf(State.getSelectedItem());
+                String state = State.getSelectedItem().toString();
 
-                if(state == "Select your state" || state.length() < 1){
-                    TextView errorText = (TextView)State.getSelectedView();
-                    errorText.setError("");
-                    errorText.setTextColor(Color.RED);
-                    errorText.setText("Select state");
-                }
 
                 if(name.length() > 50 || name.length() < 1){
                     fullName.setError("Full name length must be same or less than 50 characters");
@@ -108,13 +111,32 @@ public class Clientprofile extends AppCompatActivity {
                     return;
                 }
 
-                SharedPreferences.Editor editor = SP.edit();
-                editor.putString(FN, name);
-                editor.putString(AD1, ad1);
-                editor.putString(AD2, ad2);
-                editor.putString(CITY, city);
-                editor.putString(ZIP, zip);
-                editor.commit();
+                
+
+                userID = fAuth.getCurrentUser().getUid();
+
+                DocumentReference documentReference = fStore.collection("users").document(userID);
+                Map<String, Object> user = new HashMap<>();
+                user.put("FullName", name);
+                user.put("Address1", ad1);
+                user.put("Address2", ad2);
+                user.put("City", city);
+                user.put("Zip", zip);
+                user.put("State", state);
+
+
+                documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("TAG", "onSuccess: user profile is created for " + userID);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("TAG", "onFailure: " + e.toString());
+                    }
+                });
 
             }
         });
@@ -128,12 +150,7 @@ public class Clientprofile extends AppCompatActivity {
         });
 
 
-        Spinner mySpinner = (Spinner) findViewById(R.id.stateSpinner);
 
-        ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(Clientprofile.this,
-                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.states));
-        myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mySpinner.setAdapter(myAdapter);
     }
 
     public void backHome(){

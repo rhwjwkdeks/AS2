@@ -30,6 +30,8 @@ public class Home extends AppCompatActivity {
                 openClientProfile();
             }
         });
+
+
         fuelQuoteButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -46,7 +48,7 @@ public class Home extends AppCompatActivity {
         });
     }
     public void openClientProfile(){
-        Intent intent = new Intent(this, Clientprofile.class);
+        Intent intent = new Intent(this, viewProfile.class);
         startActivity(intent);
     }
 
