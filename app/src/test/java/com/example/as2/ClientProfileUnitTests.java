@@ -1,13 +1,6 @@
 package com.example.as2;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.SmallTest;
-import androidx.test.rule.ActivityTestRule;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -15,8 +8,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-@RunWith(AndroidJUnit4.class)
-@SmallTest
+
 public class ClientProfileUnitTests {
 
     public static final String bad_state = "Invalid State";
@@ -26,14 +18,7 @@ public class ClientProfileUnitTests {
     public static final String bad_city = "City length must be same or less than 100 characters";
     public static final String bad_zip = "Zip code must be five or nine length";
     public static final String good_profile = "Profile Completed!";
-    public ActivityTestRule<Clientprofile> activityRule = new ActivityTestRule<>(Clientprofile.class);
-    Clientprofile c;
-
-    @Before
-    public void setUp() throws Exception {
-        activityRule.launchActivity(null);
-        c = activityRule.getActivity();
-    }
+    Clientprofile c = new Clientprofile();
 
     @Test
     public void testBadState() {
