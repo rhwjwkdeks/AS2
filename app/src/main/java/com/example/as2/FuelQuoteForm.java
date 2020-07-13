@@ -3,6 +3,7 @@ package com.example.as2;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,31 +14,29 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class FuelQuoteForm extends AppCompatActivity {
     private EditText gallons_value;
-    private DatePicker date_value;
+    private TextView date_value;
+    DatePickerDialog picker;
     private TextView address_value, sprice_value, tprice_value;
 
     private Button submit_button, back_button;
 
-    private final Calendar currentDate = Calendar.getInstance();
-
-    private FirebaseAuth firebaseAuth;
-    private FirebaseFirestore firebaseFirestore;
+    FirebaseAuth firebaseAuth;
+    FirebaseFirestore firebaseFirestore;
 
 
     private final String TAG = "FuelQuoteForm";
@@ -86,42 +85,58 @@ public class FuelQuoteForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String g = gallons_value.getText().toString();
-                if (g.length() < 1) {
-                    gallons_value.setError("Please enter the number of gallons.");
-                    return;
+                float gvalue = 0;
+                boolean enteredGallons = false;
+                try {
+                    gvalue = Float.parseFloat(g);
+                    enteredGallons = true;
                 }
-                float gvalue = Float.parseFloat(g);
+                catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Please enter the gallons.", Toast.LENGTH_LONG).show();
+                    enteredGallons = false;
+                }
                 String a = address_value.getText().toString().trim();
                 String s = sprice_value.getText().toString().substring(1);
                 float svalue = Float.parseFloat(s);
-                String t = tprice_value.getText().toString();
-                float tvalue = Float.parseFloat(t);
-                int selectedYear = date_value.getYear();
-                int selectedMonth = date_value.getMonth();
-                int selectedDay =  date_value.getDayOfMonth();
-                String prefDate = selectedYear + "-" + selectedMonth + "-" + selectedDay;
+                String t = tprice_value.getText().toString().substring(1);
+                float tvalue = 0;
+                try {
+                    tvalue = Float.parseFloat(t);
+                }
+                catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Please enter the gallons.", Toast.LENGTH_SHORT).show();
+                }
+                String prefDate = date_value.getText().toString();
+                boolean enteredDate = true;
+                if(prefDate.isEmpty() || prefDate.matches(".*[a-z].*")) {
+                    Toast.makeText(getApplicationContext(),"Please enter a valid date.", Toast.LENGTH_SHORT).show();
+                    enteredDate = false;
+                }
+                if(enteredDate && enteredGallons) {
+                    final String userID = firebaseAuth.getCurrentUser().getUid();
 
-                DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
-                Map<String, Object> data = new HashMap<>();
-                data.put("gallonsRequested", gvalue);
-                data.put("date", prefDate);
-                data.put("address", a);
-                data.put("pricePerGallon", svalue);
-                data.put("totalDue", tvalue);
-                data.put("userID", userID);
-                documentReference.collection("fuelQuote").add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
-                    }
-                })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error adding document", e);
-                            }
-                        });
-
+                    CollectionReference collectionReference = firebaseFirestore.collection("fuelQuoteHistory");
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("gallonsRequested", gvalue);
+                    data.put("date", prefDate);
+                    data.put("address", a);
+                    data.put("pricePerGallon", svalue);
+                    data.put("totalDue", tvalue);
+                    data.put("userID", userID);
+                    collectionReference.add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                        }
+                    })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Error adding document", e);
+                                }
+                            });
+                    Toast.makeText(getApplicationContext(), "Form submitted successfully!", Toast.LENGTH_LONG).show();
+                }
             }
         });
         back_button = (Button) findViewById(R.id.back_button);
@@ -134,34 +149,33 @@ public class FuelQuoteForm extends AppCompatActivity {
 
     }
     private void initCurrentDate() {
-        date_value = (DatePicker) findViewById(R.id.date_value);
-        final int year = currentDate.get(Calendar.YEAR);
-        final int month = currentDate.get(Calendar.MONTH);
-        final int day = currentDate.get(Calendar.DAY_OF_MONTH);
-        date_value.init(year, month, day, new DatePicker.OnDateChangedListener() {
+        date_value = (TextView) findViewById(R.id.date_value);
+        date_value.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDateChanged(DatePicker view, int y, int m, int d) {
-                if (y > year)
-                    view.updateDate(year, month, day);
-
-                if (m > month && y == year)
-                    view.updateDate(year, month, day);
-
-                if (d > day && y == year && m == month)
-                    view.updateDate(year, month, day);
-                Log.d(TAG, "Year=" + year + " Month=" + (month + 1) + " day=" + day);
+            public void onClick(View v) {
+                final Calendar currentDate = Calendar.getInstance();
+                final int year = currentDate.get(Calendar.YEAR);
+                final int month = currentDate.get(Calendar.MONTH);
+                final int day = currentDate.get(Calendar.DAY_OF_MONTH);
+                picker = new DatePickerDialog(FuelQuoteForm.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                        date_value.setText(month + "-" + day + "-" + year);
+                    }
+                }, year, month, day);
+                picker.show();
             }
         });
     }
     private void initDeliveryAddress(String userID) {
-        DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
+        /*DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
         String address = documentReference.get().getResult().getString("Address1");
         if(address.isEmpty()) {
             address = documentReference.get().getResult().getString("Address2");
-        }
+        }*/
         address_value = (TextView) findViewById(R.id.address_value);
-        address_value.setText(address);
-        Log.d(TAG, "Address from Client Profile:" + address);
+        address_value.setText("1000 Apple Street");
+        Log.d(TAG, "Address from Client Profile:" + "1000");
     }
     public void backHome(){
         Intent intent = new Intent(this, Home.class);
