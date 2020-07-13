@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -33,7 +34,7 @@ public class FuelQuoteHistory extends AppCompatActivity {
 
 
     ArrayList<FuelQuote> fuelQuotes = new ArrayList<FuelQuote>(1);
-    FuelQuoteHistoryAdapter adapter = new FuelQuoteHistoryAdapter(fuelQuotes);
+    FuelQuoteHistoryAdapter adapter;
 
     FirebaseFirestore fStore;
     FirebaseAuth fAuth;
@@ -55,16 +56,18 @@ public class FuelQuoteHistory extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.fuelQuoteHistoryRecyclerView);
 //        recyclerView.setHasFixedSize(true);
 
-        fuelQuotes = FuelQuote.createFuelQuoteHistoryList(1);
+//        fuelQuotes = FuelQuote.createFuelQuoteHistoryList(10);
         queryDatabase();
-        // TODO: Remove ^, replace with query()
-
-
+        adapter = new FuelQuoteHistoryAdapter(fuelQuotes);
         recyclerView.setAdapter(adapter);
 
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
+//        FirestoreRecyclerOptions<FuelQuote> options = new FirestoreRecyclerOptions.Builder<FuelQuote>()
+//                .setQuery(query, FuelQuote.class)
+//                .build();
     }
 
     void queryDatabase() {
@@ -75,8 +78,11 @@ public class FuelQuoteHistory extends AppCompatActivity {
         userID = Objects.requireNonNull(fAuth.getCurrentUser()).getUid(); // current logged in UID
 
         fStore.collection("fuelQuoteHistory")
+
                 .whereEqualTo("userID", userID) // only shows us fuel quotes that we requested
+
                 .get()
+
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
