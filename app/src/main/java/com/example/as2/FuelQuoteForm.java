@@ -108,6 +108,7 @@ public class FuelQuoteForm extends AppCompatActivity {
                 data.put("address", a);
                 data.put("pricePerGallon", svalue);
                 data.put("totalDue", tvalue);
+                data.put("userID", userID);
                 documentReference.collection("fuelQuote").add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {

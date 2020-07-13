@@ -1,5 +1,6 @@
 package com.example.as2;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +66,7 @@ public class FuelQuoteHistoryAdapter extends RecyclerView.Adapter<FuelQuoteHisto
          */
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull FuelQuoteHistoryAdapter.ViewHolder holder, int position) {
         FuelQuote fuelQuote = fuelQuoteList.get(position);
@@ -84,6 +86,10 @@ public class FuelQuoteHistoryAdapter extends RecyclerView.Adapter<FuelQuoteHisto
 
     @Override
     public int getItemCount() {
+
+        if (fuelQuoteList == null) { return 0; }
+
         return fuelQuoteList.size();
     }
+
 }
