@@ -54,9 +54,7 @@ public class FuelQuoteHistory extends AppCompatActivity {
 
 
         recyclerView = (RecyclerView) findViewById(R.id.fuelQuoteHistoryRecyclerView);
-//        recyclerView.setHasFixedSize(true);
 
-//        fuelQuotes = FuelQuote.createFuelQuoteHistoryList(10);
         queryDatabase();
         adapter = new FuelQuoteHistoryAdapter(fuelQuotes);
         recyclerView.setAdapter(adapter);
@@ -65,9 +63,6 @@ public class FuelQuoteHistory extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-//        FirestoreRecyclerOptions<FuelQuote> options = new FirestoreRecyclerOptions.Builder<FuelQuote>()
-//                .setQuery(query, FuelQuote.class)
-//                .build();
     }
 
     void queryDatabase() {
