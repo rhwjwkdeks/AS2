@@ -1,29 +1,25 @@
 package com.example.as2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.Objects;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class FuelQuoteHistory extends AppCompatActivity {
 //    Log.d();
@@ -31,6 +27,7 @@ public class FuelQuoteHistory extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    Button goBack;
 
 
     ArrayList<FuelQuote> fuelQuotes = new ArrayList<FuelQuote>(1);
@@ -63,6 +60,19 @@ public class FuelQuoteHistory extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
+        goBack = findViewById(R.id.goBackButton);
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                backHome();
+            }
+        });
+
+    }
+
+    void backHome(){
+        Intent intent = new Intent(this, Home.class);
+        startActivity(intent);
     }
 
     void queryDatabase() {

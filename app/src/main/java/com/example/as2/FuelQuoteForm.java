@@ -1,6 +1,7 @@
 package com.example.as2;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
@@ -25,7 +26,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class FuelQuoteForm extends AppCompatActivity {
     private EditText gallons_value;
@@ -76,8 +80,27 @@ public class FuelQuoteForm extends AppCompatActivity {
         });
         initCurrentDate();
         initDeliveryAddress(userID);
+
+
+
+
         sprice_value = (TextView) findViewById(R.id.sprice_value);
         //To be calculated via Pricing Module
+
+        DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
+                String st;
+                st = documentSnapshot.getString("State");
+                if(st == "Texas"){
+                    Double margin = (0.02 - 0.01 + 0.02 + 0.1) * 1.5;
+                }
+                else{
+                    Double margin = (0.04 - 0.01 + 0.02 + 0.1) * 1.5;
+                }
+            }
+        });
         sprice_value.setText("$2.00");
         tprice_value = (TextView) findViewById(R.id.tprice_value);
         submit_button = (Button) findViewById(R.id.submit_button);
@@ -168,14 +191,34 @@ public class FuelQuoteForm extends AppCompatActivity {
         });
     }
     private void initDeliveryAddress(String userID) {
+
+        DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
+                String st1;
+                String st2;
+                String st3;
+
+                st1 = documentSnapshot.getString("Address1");
+                st2 = documentSnapshot.getString("Address2");
+
+                st3 = st1 + " " + st2;
+
+                address_value = findViewById(R.id.address_value);
+                address_value.setText(st3);
+            }
+        });
         /*DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
         String address = documentReference.get().getResult().getString("Address1");
         if(address.isEmpty()) {
             address = documentReference.get().getResult().getString("Address2");
-        }*/
+        }
         address_value = (TextView) findViewById(R.id.address_value);
         address_value.setText("1000 Apple Street");
         Log.d(TAG, "Address from Client Profile:" + "1000");
+        */
+
     }
     public void backHome(){
         Intent intent = new Intent(this, Home.class);
