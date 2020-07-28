@@ -79,15 +79,11 @@ public class FuelQuoteHistory extends AppCompatActivity {
 
         // test UID: y968ZYKigxX6mjwgFTvLkFaIIRA3
 
-//        fStore = FirebaseFirestore.getInstance(); // DB instance
         userID = Objects.requireNonNull(fAuth.getCurrentUser()).getUid(); // current logged in UID
 
         fStore.collection("fuelQuoteHistory")
-
                 .whereEqualTo("userID", userID) // only shows us fuel quotes that we requested
-
                 .get()
-
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
