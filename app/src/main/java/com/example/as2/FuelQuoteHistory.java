@@ -60,6 +60,8 @@ public class FuelQuoteHistory extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
+
+
         goBack = findViewById(R.id.goBackButton);
         goBack.setOnClickListener(new View.OnClickListener() {
             @Override

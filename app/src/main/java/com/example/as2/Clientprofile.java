@@ -38,13 +38,6 @@ public class Clientprofile extends AppCompatActivity {
     FirebaseFirestore fStore;
     String userID;
 
-    public static final String mypreference = "mypref";
-    public static final String FN = "fullnameKey";
-    public static final String AD1 = "ad1Key";
-    public static final String AD2 = "ad2Key";
-    public static final String CITY = "cityKey";
-    public static final String ZIP = "zipKey";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,36 +149,6 @@ public class Clientprofile extends AppCompatActivity {
     public void backHome(){
         Intent intent = new Intent(this, Home.class);
         startActivity(intent);
-    }
-
-    public String validateProfile(String state, String name, String ad1, String ad2, String city, String zip) {
-        if(state == "Select your state" || state.length() < 1){
-            return "Invalid State";
-        }
-
-        if(name.length() > 50 || name.length() < 1){
-            return ("Full name length must be same or less than 50 characters");
-        }
-
-
-        if(ad1.length() > 100 || ad1.length() < 1){
-            return("Address1 length must be same or less than 100 characters");
-        }
-
-
-        if(ad2.length() > 100){
-            return ("Address2 length must be same or less than 100 characters");
-        }
-
-
-        if(city.length() > 100 || city.length() < 1){
-            return("City length must be same or less than 100 characters");
-        }
-
-        if(zip.length() != 5 && zip.length() != 9){
-            return("Zip code must be five or nine length");
-        }
-        return "Profile Completed!";
     }
 }
 

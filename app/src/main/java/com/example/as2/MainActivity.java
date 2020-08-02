@@ -45,17 +45,20 @@ public class MainActivity extends AppCompatActivity {
                 String username = mUsername.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
 
-                if (TextUtils.isEmpty(username)) {
+                if (TextUtils.isEmpty(username))
+                {
                         mUsername.setError("Username is Required.");
                         return;
-                    }
+                }
 
-                    if (TextUtils.isEmpty(password)) {
+                if (TextUtils.isEmpty(password))
+                {
                         mPassword.setError("Password is Required.");
                         return;
-                    }
+                }
 
-                    if (password.length() < 6) {
+                if (password.length() < 6)
+                {
                         mPassword.setError("Password must be more than five characters");
                         return;
                 }
@@ -91,26 +94,6 @@ public class MainActivity extends AppCompatActivity {
     public void openRegister(){
         Intent intent = new Intent(this, Register.class);
         startActivity(intent);
-    }
-
-    public String validateLogin(String username, String password) {
-        if (username.isEmpty()) {
-            return "Username is Required.";
-        }
-
-        if (password.isEmpty()) {
-            return "Password is Required.";
-        }
-        if (password.length() < 6) {
-            return "Password must be more than five characters";
-        }
-        if (!username.equals("abc")) {
-            return "No such username exists in the database.";
-        }
-        if(!password.equals("abcdef")) {
-            return "Wrong Password.";
-        }
-        return "Logged in Successfully.";
     }
 }
 
