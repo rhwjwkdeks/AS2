@@ -5,10 +5,52 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/fqh_linear_layout_frag">
+        <TextView
+            android:id="@+id/fqh_date"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+
+            android:text="Date"/>
+        <TextView
+            android:id="@+id/fqh_address"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+
+            android:text="Address"/>
+
+        <TextView
+            android:id="@+id/fqh_gallons_requested"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="Gallons"/>
+
+        <TextView
+            android:id="@+id/fqh_price_per_gallon"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="$/gal"/>
+
+
+
+        <TextView
+            android:id="@+id/fqh_total_due"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+
+            android:text="Total"/>
+
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fuelQuoteHistoryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/fqh_linear_layout_frag"
         android:scrollbars="vertical"/>
 
     <Button

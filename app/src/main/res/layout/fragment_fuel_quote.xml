@@ -6,34 +6,38 @@
     android:orientation="horizontal"
     android:id="@+id/fqh_linear_layout">
     <TextView
-        android:id="@+id/fqh_total_due"
-        android:layout_width="100dp"
+        android:id="@+id/fqh_date"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
 
-        android:text="test total due"/>
+        android:text="Date"/>
+    <TextView
+        android:id="@+id/fqh_address"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+
+        android:text="Address"/>
+
     <TextView
         android:id="@+id/fqh_gallons_requested"
-        android:layout_width="50dp"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:text="test gallons requested"/>
+        android:text="Gallons"/>
 
     <TextView
         android:id="@+id/fqh_price_per_gallon"
-        android:layout_width="50dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:text="test price per gallon"/>
+        android:text="$/gal"/>
+
+
+
     <TextView
-        android:id="@+id/fqh_address"
-        android:layout_width="100dp"
+        android:id="@+id/fqh_total_due"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fqh_total_due"
-        android:text="test address"/>
-    <TextView
-        android:id="@+id/fqh_date"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/fqh_total_due"
-        android:text="test date"/>
+
+        android:text="Total"/>
 
 </LinearLayout>
 
