@@ -1,8 +1,6 @@
 package com.example.as2;
 
 import android.util.Log;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,24 +19,25 @@ import java.util.Map;
 import java.util.Objects;
 
 public class FuelQuoteFormDatabase implements FuelQuoteFormMVP.Model {
-    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore firebaseFirestore;
+    private FirebaseAuth firebaseAuth;
     private String userID;
     private double gal;
     private String date;
     private String address;
     private double svalue;
     private double tvalue;
-
     private final String TAG = "FuelQuoteForm";
 
     public FuelQuoteFormDatabase() {
-        this.userID = Objects.requireNonNull(firebaseAuth.getCurrentUser().getUid());
         gal = 0;
         date = "1-1-90";
         address = "";
         svalue = 0;
         tvalue = 0;
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        this.userID = Objects.requireNonNull(firebaseAuth.getCurrentUser().getUid());
     }
 
     public FuelQuoteFormDatabase(double gal, String date, String address, double svalue, double tvalue) {
@@ -48,8 +47,28 @@ public class FuelQuoteFormDatabase implements FuelQuoteFormMVP.Model {
         this.address = address;
         this.svalue = svalue;
         this.tvalue = tvalue;
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
     }
-
+    //For testing purposes
+    public FuelQuoteFormDatabase(FirebaseFirestore fs, FirebaseAuth fa) {
+        this.userID = "";
+        gal = 0;
+        date = "1-1-90";
+        address = "";
+        svalue = 0;
+        tvalue = 0;
+        firebaseFirestore = fs;
+        firebaseAuth = fa;
+    }
+    public FuelQuoteFormDatabase(String a) {
+        this.userID = "";
+        gal = 0;
+        date = "1-1-90";
+        address = "";
+        svalue = 0;
+        tvalue = 0;
+    }
     //getters and setters
 
     @Override
@@ -84,23 +103,30 @@ public class FuelQuoteFormDatabase implements FuelQuoteFormMVP.Model {
 
     @Override
     public void accessAddresses(final FirestoreCallback callback) {
-        DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    String ad1 = Objects.requireNonNull(task.getResult().getString("Address1"));
-                    String ad2 = Objects.requireNonNull(task.getResult().getString("Address2"));
-                    String[] options;
-                    if (ad2.isEmpty()) {
-                        options = new String[]{ad1};
-                    } else {
-                        options = new String[]{ad1, ad2};
+        try {
+            DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
+            documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        String ad1 = Objects.requireNonNull(task.getResult().getString("Address1"));
+                        String ad2 = Objects.requireNonNull(task.getResult().getString("Address2"));
+                        String[] options;
+                        if (ad2.isEmpty()) {
+                            options = new String[]{ad1};
+                        } else {
+                            options = new String[]{ad1, ad2};
+                        }
+                        Log.d(TAG, "Address successfully set");
+                        //System.out.println("Address successfully set");
+                        callback.onCallback(options);
                     }
-                    callback.onCallback(options);
                 }
-            }
-        });
+            });
+        }
+        catch (Exception e) {
+
+        }
     }
 
     @Override
@@ -136,41 +162,53 @@ public class FuelQuoteFormDatabase implements FuelQuoteFormMVP.Model {
     @Override
     //returns an array containing the suggested and total price of gas
     public void pricingModule(final FirestoreCallback callback) {
-        final double gallons = this.gal;
-        final double gallonsRequestedFactor = gallons > 1000 ? 0.02 : 0.03;
-        final double currentPrice = 1.50;
-        //query database to get the user's state
-        DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    final String state = Objects.requireNonNull(task.getResult().getString("State"));
-                    //query database to see if user has a fuel quote history
-                    firebaseFirestore.collection("fuelQuoteHistory").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                double locationFactor = state.equals("Texas") ? 0.02 : 0.04;
-                                double rateHistoryFactor = Objects.requireNonNull(task.getResult().size()) == 0 ? 0 : 0.01;
-                                double margin = currentPrice * (locationFactor - rateHistoryFactor + gallonsRequestedFactor + 0.1);
-                                svalue = currentPrice + margin;
-                                Log.d(TAG, "pricing module: " + svalue);
-                                tvalue = gallons * svalue;
-                                Log.d(TAG, "Pricing module: " + tvalue);
-                                callback.onCallback(svalue, tvalue);
-                            } else {
-                                Log.d(TAG, "error retrieving fuel quote history from database");
+        try {
+            final double gallons = this.gal;
+            final double gallonsRequestedFactor = gallons > 1000 ? 0.02 : 0.03;
+            final double currentPrice = 1.50;
+            //query database to get the user's state
+            DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
+            documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        final String state = Objects.requireNonNull(task.getResult().getString("State"));
+                        //query database to see if user has a fuel quote history
+                        firebaseFirestore.collection("fuelQuoteHistory").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    double locationFactor = state.equals("Texas") ? 0.02 : 0.04;
+                                    double rateHistoryFactor = Objects.requireNonNull(task.getResult().size()) == 0 ? 0 : 0.01;
+                                    double margin = currentPrice * (locationFactor - rateHistoryFactor + gallonsRequestedFactor + 0.1);
+                                    svalue = currentPrice + margin;
+                                    Log.d(TAG, "Pricing module: " + svalue);
+                                    //System.out.println("Pricing module: " + svalue);
+                                    tvalue = gallons * svalue;
+                                    Log.d(TAG, "Pricing module: " + tvalue);
+                                    //System.out.println("Pricing module: " + tvalue);
+                                    callback.onCallback(svalue, tvalue);
+                                } else {
+                                    Log.d(TAG, "error retrieving fuel quote history from database");
+                                    //System.out.println("error retrieving fuel quote history from database");
+                                    callback.onCallback(-1, -1);
+                                }
                             }
-                        }
-                    });
-                } else {
-                    Log.d(TAG, "error retrieving state from database");
+                        });
+                    } else {
+                        Log.d(TAG, "error retrieving state from database");
+                        // System.out.println("error retrieving state from database");
+                        callback.onCallback(-1, -1);
+                    }
                 }
-            }
-        });
+            });
+        }
+        catch (Exception e) {
+
+        }
     }
 
+    @Override
     //store set fields in Database
     public void storeFieldsInDatabase() {
         CollectionReference collectionReference = firebaseFirestore.collection("fuelQuoteHistory");
@@ -185,13 +223,16 @@ public class FuelQuoteFormDatabase implements FuelQuoteFormMVP.Model {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                //System.out.println("DocumentSnapshot written with ID: " + documentReference.getId());
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error adding document", e);
+                        //System.out.println("Error adding document");
                     }
                 });
     }
+
 }

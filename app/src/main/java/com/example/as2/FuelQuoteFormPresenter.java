@@ -28,13 +28,16 @@ public class FuelQuoteFormPresenter implements FuelQuoteFormMVP.Presenter {
 
     private final String TAG = "FuelQuoteFormPresenter";
 
-    public FuelQuoteFormPresenter(FuelQuoteFormMVP.View view) {
+    public FuelQuoteFormPresenter(FuelQuoteFormMVP.View view, String test) {
         this.view = view;
-        db = new FuelQuoteFormDatabase();
+        if (test.isEmpty())
+            db = new FuelQuoteFormDatabase();
+        else
+            db = new FuelQuoteFormDatabase("test");
     }
 
     @Override
-    public void validateGallons(final String galText) {
+    public double validateGallons(final String galText) {
         //return 0 or -1 if invalid string, gal otherwise
         if (!galText.isEmpty()) {
             double parse_gal = 0;
@@ -42,23 +45,27 @@ public class FuelQuoteFormPresenter implements FuelQuoteFormMVP.Presenter {
                 parse_gal = Double.parseDouble(galText);
             } catch (Exception e) {
                 //error in parsing double
-                Log.d(TAG, "error in parsing double");
+                //Log.d(TAG, "error in parsing double");
                 view.setGallonsError();
+                return -1;
             }
             if (parse_gal <= 0) {
                 //gallons <= 0 is not allowed
-                Log.d(TAG, "gallons <= 0");
+                //Log.d(TAG, "gallons <= 0");
+                return 0;
             }
             db.setGallons(parse_gal);
+            return parse_gal;
         } else {
             //empty string
-            Log.d(TAG, "empty gallons");
+            //Log.d(TAG, "empty gallons");
             view.setGallonsError();
+            return 0;
         }
     }
 
     @Override
-    public void validateDate(int y, int m, int d) {
+    public String validateDate(int y, int m, int d) {
         final Calendar currentDate = Calendar.getInstance();
         final int year = currentDate.get(Calendar.YEAR);
         final int month = currentDate.get(Calendar.MONTH);
@@ -66,13 +73,15 @@ public class FuelQuoteFormPresenter implements FuelQuoteFormMVP.Presenter {
         if (y < year || (y == year && (m < month || (m == month && d < day)))) {
             view.setDate((month + 1) + "-" + day + "-" + year);
             view.setDateError();
+            return "invalid date";
         } else {
             view.setDate((m + 1) + "-" + d + "-" + y);
+            return "valid date";
         }
     }
 
     @Override
-    public void onSubmit(String gallons, String address, String date, String s, String t) {
+    public String onSubmit(String gallons, String address, String date, String s, String t) {
         double gvalue = 0;
         boolean enteredGallons = true;
         try {
@@ -80,22 +89,26 @@ public class FuelQuoteFormPresenter implements FuelQuoteFormMVP.Presenter {
         } catch (Exception e) {
             view.setGallonsError();
             enteredGallons = false;
+            return "invalid gallons";
         }
         if (gvalue <= 0) {
             view.setGallonsError();
             enteredGallons = false;
+            return "invalid gallons";
         }
         if (enteredGallons) {
             boolean enteredAddress = true;
             if (address.equals("Select the address to deliver to...")) {
                 view.setAddressError();
                 enteredAddress = false;
+                return "invalid address";
             }
             if (enteredAddress) {
                 boolean enteredDate = true;
                 if (date.isEmpty() || date.matches(".*[a-z].*")) {
                     view.setDateError();
                     enteredDate = false;
+                    return "invalid date";
                 }
                 if (enteredDate) {
                     String stext = s.substring(1);
@@ -107,11 +120,18 @@ public class FuelQuoteFormPresenter implements FuelQuoteFormMVP.Presenter {
                     db.setDate(date);
                     db.setSuggestedPrice(svalue);
                     db.setTotalPrice(tvalue);
-                    db.storeFieldsInDatabase();
+                    try {
+                        db.storeFieldsInDatabase();
+                    }
+                    catch (Exception e) {
+
+                    }
                     view.successSubmit();
+                    return "success";
                 }
             }
         }
+        return "error";
     }
 
     @Override
