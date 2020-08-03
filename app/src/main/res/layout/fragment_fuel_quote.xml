@@ -7,7 +7,7 @@
     android:id="@+id/fqh_linear_layout">
     <TextView
         android:id="@+id/fqh_total_due"
-        android:layout_width="100dp"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
 
         android:text="test total due"/>
@@ -19,12 +19,12 @@
 
     <TextView
         android:id="@+id/fqh_price_per_gallon"
-        android:layout_width="50dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:text="test price per gallon"/>
     <TextView
         android:id="@+id/fqh_address"
-        android:layout_width="100dp"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fqh_total_due"
         android:text="test address"/>
