@@ -119,7 +119,7 @@ public class FuelQuoteFormPresenter implements FuelQuoteFormMVP.Presenter {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         String userID = "";
         try {
-            userID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser().getUid(), "Error fetching user ID");
+            userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         }
         catch (Exception e) {
             view.setUserError();

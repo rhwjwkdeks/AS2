@@ -18,6 +18,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class FuelQuoteFormDatabase implements FuelQuoteFormMVP.Model {
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
@@ -32,7 +33,7 @@ public class FuelQuoteFormDatabase implements FuelQuoteFormMVP.Model {
     private final String TAG = "FuelQuoteForm";
 
     public FuelQuoteFormDatabase() {
-        this.userID = firebaseAuth.getCurrentUser().getUid();
+        this.userID = Objects.requireNonNull(firebaseAuth.getCurrentUser().getUid());
         gal = 0;
         date = "1-1-90";
         address = "";
@@ -41,7 +42,7 @@ public class FuelQuoteFormDatabase implements FuelQuoteFormMVP.Model {
     }
 
     public FuelQuoteFormDatabase(double gal, String date, String address, double svalue, double tvalue) {
-        this.userID = firebaseAuth.getCurrentUser().getUid();
+        this.userID = Objects.requireNonNull(firebaseAuth.getCurrentUser().getUid());
         this.gal = gal;
         this.date = date;
         this.address = address;
@@ -88,8 +89,8 @@ public class FuelQuoteFormDatabase implements FuelQuoteFormMVP.Model {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    String ad1 = task.getResult().getString("Address1");
-                    String ad2 = task.getResult().getString("Address2");
+                    String ad1 = Objects.requireNonNull(task.getResult().getString("Address1"));
+                    String ad2 = Objects.requireNonNull(task.getResult().getString("Address2"));
                     String[] options;
                     if (ad2.isEmpty()) {
                         options = new String[]{ad1};
@@ -144,14 +145,14 @@ public class FuelQuoteFormDatabase implements FuelQuoteFormMVP.Model {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    final String state = task.getResult().getString("State");
+                    final String state = Objects.requireNonNull(task.getResult().getString("State"));
                     //query database to see if user has a fuel quote history
                     firebaseFirestore.collection("fuelQuoteHistory").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 double locationFactor = state.equals("Texas") ? 0.02 : 0.04;
-                                double rateHistoryFactor = task.getResult().size() == 0 ? 0 : 0.01;
+                                double rateHistoryFactor = Objects.requireNonNull(task.getResult().size()) == 0 ? 0 : 0.01;
                                 double margin = currentPrice * (locationFactor - rateHistoryFactor + gallonsRequestedFactor + 0.1);
                                 svalue = currentPrice + margin;
                                 Log.d(TAG, "pricing module: " + svalue);
