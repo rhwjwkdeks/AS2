@@ -11,14 +11,21 @@
         android:orientation="horizontal"
         android:id="@+id/fqh_linear_layout_frag">
         <TextView
-            android:id="@+id/fqh_total_due"
-            android:layout_width="70dp"
+            android:id="@+id/fqh_date"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
 
-            android:text="Total"/>
+            android:text="Date"/>
+        <TextView
+            android:id="@+id/fqh_address"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+
+            android:text="Address"/>
+
         <TextView
             android:id="@+id/fqh_gallons_requested"
-            android:layout_width="50dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:text="Gallons"/>
 
@@ -27,18 +34,15 @@
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:text="$/gal"/>
+
+
+
         <TextView
-            android:id="@+id/fqh_address"
-            android:layout_width="120dp"
+            android:id="@+id/fqh_total_due"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/fqh_total_due"
-            android:text="Address"/>
-        <TextView
-            android:id="@+id/fqh_date"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/fqh_total_due"
-            android:text="Date"/>
+
+            android:text="Total"/>
 
     </LinearLayout>
 

@@ -86,6 +86,7 @@ public class FuelQuoteHistory extends AppCompatActivity {
         fStore.collection("fuelQuoteHistory")
                 .whereEqualTo("userID", userID) // only shows us fuel quotes that we requested
                 .get()
+
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
